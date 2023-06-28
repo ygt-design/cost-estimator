@@ -1,10 +1,11 @@
 import { createSignal } from 'solid-js';
-
+import ChoiceCard from './components/Choice';
 
 function App() {
   const [points, setPoints] = createSignal(0);
   const [selectedOptions, setSelectedOptions] = createSignal([]);
   const [step, setStep] = createSignal(1);
+  const [showErrorMessage, setShowErrorMessage] = createSignal(false);
 
   const handleOptionClick = (value) => {
     setSelectedOptions((prevOptions) => {
@@ -20,16 +21,23 @@ function App() {
   };
 
   const handleConfirm = () => {
-    const totalPoints = selectedOptions().reduce((sum, option) => sum + option, 0);
-    setPoints((prevPoints) => prevPoints + totalPoints);
-    setSelectedOptions([]);
-    setStep((prevStep) => prevStep + 1);
+    if (selectedOptions().length === 0) {
+      // Show error message if no option is selected
+      setShowErrorMessage(true);
+    } else {
+      const totalPoints = selectedOptions().reduce((sum, option) => sum + option, 0);
+      setPoints((prevPoints) => prevPoints + totalPoints);
+      setSelectedOptions([]);
+      setStep((prevStep) => prevStep + 1);
+      setShowErrorMessage(false);
+    }
   };
 
   const handleReset = () => {
     setPoints(0);
     setSelectedOptions([]);
     setStep(1);
+    setShowErrorMessage(false);
   };
 
   return (
@@ -37,18 +45,17 @@ function App() {
       {step() === 1 && (
         <div>
           <p>Current Points: {points()}</p>
-          <button
-            onClick={() => handleOptionClick(1)}
-            classList={{ selected: selectedOptions().includes(1) }}
-          >
-            Choose 1
-          </button>
-          <button
-            onClick={() => handleOptionClick(2)}
-            classList={{ selected: selectedOptions().includes(2) }}
-          >
-            Choose 2
-          </button>
+          <ChoiceCard
+            value={1}
+            selectedOptions={selectedOptions}
+            handleOptionClick={handleOptionClick}
+          />
+          <ChoiceCard
+            value={2}
+            selectedOptions={selectedOptions}
+            handleOptionClick={handleOptionClick}
+          />
+          {showErrorMessage() && <p>Please choose an option to continue.</p>}
           <button onClick={handleConfirm}>Confirm</button>
         </div>
       )}
@@ -56,18 +63,17 @@ function App() {
       {step() === 2 && (
         <div>
           <p>Current Points: {points()}</p>
-          <button
-            onClick={() => handleOptionClick(3)}
-            classList={{ selected: selectedOptions().includes(3) }}
-          >
-            Choose 3
-          </button>
-          <button
-            onClick={() => handleOptionClick(4)}
-            classList={{ selected: selectedOptions().includes(4) }}
-          >
-            Choose 4
-          </button>
+          <ChoiceCard
+            value={3}
+            selectedOptions={selectedOptions}
+            handleOptionClick={handleOptionClick}
+          />
+          <ChoiceCard
+            value={4}
+            selectedOptions={selectedOptions}
+            handleOptionClick={handleOptionClick}
+          />
+          {showErrorMessage() && <p>Please choose an option to continue.</p>}
           <button onClick={handleConfirm}>Confirm</button>
         </div>
       )}
