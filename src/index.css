@@ -1,3 +1,7 @@
+div{
+  display: inline-block;
+}
+
 button{
   width: 200px;
   height: 100px;
